@@ -9,6 +9,10 @@ router.get('/',
     PostController.getAllPost
 )
 
+router.get('/:postId',
+    PostController.getPostById
+)
+
 router.post("/", 
     auth(UserRole.USER),
     PostController.createPost);

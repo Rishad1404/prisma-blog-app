@@ -33,17 +33,17 @@ const getAllPost = async (req: Request, res: Response) => {
       ? req.query.isFeatured === "true"
         ? true
         : req.query.isFeatured === "false"
-            ? false
-            : undefined
+        ? false
+        : undefined
       : undefined;
 
-    const status=req.query.status as PostStatus | undefined;
+    const status = req.query.status as PostStatus | undefined;
 
-    const authorId=req.query.authorId as string | undefined
+    const authorId = req.query.authorId as string | undefined;
 
-
-
-    const {page,limit,skip,sortBy,sortOrder}=paginationSortingHelper(req.query)
+    const { page, limit, skip, sortBy, sortOrder } = paginationSortingHelper(
+      req.query
+    );
 
     const tags = req.query.tags ? (req.query.tags as string).split(",") : [];
 
@@ -53,11 +53,11 @@ const getAllPost = async (req: Request, res: Response) => {
       isFeatured,
       status,
       authorId,
-      page ,
+      page,
       limit,
       skip,
       sortBy,
-      sortOrder
+      sortOrder,
     });
 
     res.status(200).json(result);
@@ -69,7 +69,26 @@ const getAllPost = async (req: Request, res: Response) => {
   }
 };
 
+const getPostById = async (req: Request, res: Response) => {
+  try {
+    const {postId}=req.params;
+
+    if(!postId){
+      throw new Error("Post id is required")
+    }
+
+    const result=await PostService.getPostById(postId);
+    res.status(200).json(result)
+  } catch (err) {
+    res.status(400).json({
+      error: "Failed to find",
+      details: err,
+    });
+  }
+};
+
 export const PostController = {
   createPost,
   getAllPost,
+  getPostById
 };

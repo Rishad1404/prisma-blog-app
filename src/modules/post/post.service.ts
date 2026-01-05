@@ -24,20 +24,20 @@ const getAllPost = async ({
   limit,
   skip,
   sortBy,
-  sortOrder
+  sortOrder,
 }: {
   search: string | undefined;
   tags: string[] | [];
-  isFeatured:boolean|undefined;
-  status:PostStatus | undefined;
-  authorId:string | undefined;
-  page:number,
-  limit:number,
-  skip:number,
-  sortBy:string ,
-  sortOrder:string
+  isFeatured: boolean | undefined;
+  status: PostStatus | undefined;
+  authorId: string | undefined;
+  page: number;
+  limit: number;
+  skip: number;
+  sortBy: string;
+  sortOrder: string;
 }) => {
-  const andConditions:PostWhereInput[] = [];
+  const andConditions: PostWhereInput[] = [];
 
   // search condition-----------------------------------------------------------------------
   if (search) {
@@ -74,56 +74,77 @@ const getAllPost = async ({
   }
 
   // isFeaturedCondition
-  if(typeof isFeatured==='boolean'){
+  if (typeof isFeatured === "boolean") {
     andConditions.push({
-      isFeatured
-    })
+      isFeatured,
+    });
   }
 
   // status-------------------------------------------------------------------------------
-  if(status){
+  if (status) {
     andConditions.push({
-      status
-    })
+      status,
+    });
   }
 
-
   // authorId----------------------------------------------------------------------------
-  if(authorId){
+  if (authorId) {
     andConditions.push({
-      authorId
-    })
+      authorId,
+    });
   }
 
   const allPost = await prisma.post.findMany({
-    take:limit,
+    take: limit,
     skip,
     where: {
       AND: andConditions,
     },
-    orderBy:{
-      [sortBy]:sortOrder
-    }
+    orderBy: {
+      [sortBy]: sortOrder,
+    },
   });
 
-  const total=await prisma.post.count({
-    where:{
-      AND:andConditions
-    }
-  })
+  const total = await prisma.post.count({
+    where: {
+      AND: andConditions,
+    },
+  });
 
   return {
-    data:allPost,
-    pagination:{
+    data: allPost,
+    pagination: {
       total,
       page,
       limit,
-      totalPages:Math.ceil(total/limit)
-    }
+      totalPages: Math.ceil(total / limit),
+    },
   };
+};
+
+const getPostById = async (postId: string) => {
+  return await prisma.$transaction(async (tx) => {
+    await tx.post.update({
+      where: {
+        id: postId,
+      },
+      data: {
+        views: {
+          increment: 1,
+        },
+      },
+    });
+    const postData = await tx.post.findUnique({
+      where: {
+        id: postId,
+      },
+    });
+    return postData;
+  });
 };
 
 export const PostService = {
   createPost,
   getAllPost,
+  getPostById,
 };
