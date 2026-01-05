@@ -40,6 +40,9 @@ const getAllPost = async (req: Request, res: Response) => {
 
     const authorId=req.query.authorId as string | undefined
 
+    const page = Number(req.query.page ?? 1)
+    const limit=Number(req.query.limit ?? 10)
+
     const tags = req.query.tags ? (req.query.tags as string).split(",") : [];
 
     const result = await PostService.getAllPost({
@@ -47,7 +50,9 @@ const getAllPost = async (req: Request, res: Response) => {
       tags,
       isFeatured,
       status,
-      authorId
+      authorId,
+      page ,
+      limit
     });
 
     res.status(200).json(result);
