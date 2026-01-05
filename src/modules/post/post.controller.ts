@@ -40,8 +40,11 @@ const getAllPost = async (req: Request, res: Response) => {
 
     const authorId=req.query.authorId as string | undefined
 
+    // skip=(page-1)*limit
     const page = Number(req.query.page ?? 1)
     const limit=Number(req.query.limit ?? 10)
+
+    const skip=(page-1)*limit
 
     const tags = req.query.tags ? (req.query.tags as string).split(",") : [];
 
@@ -52,7 +55,8 @@ const getAllPost = async (req: Request, res: Response) => {
       status,
       authorId,
       page ,
-      limit
+      limit,
+      skip
     });
 
     res.status(200).json(result);
