@@ -36,7 +36,9 @@ const getAllPost = async (req: Request, res: Response) => {
             : undefined
       : undefined;
 
-    const status=req.query.status as PostStatus | undefined
+    const status=req.query.status as PostStatus | undefined;
+
+    const authorId=req.query.authorId as string | undefined
 
     const tags = req.query.tags ? (req.query.tags as string).split(",") : [];
 
@@ -44,7 +46,8 @@ const getAllPost = async (req: Request, res: Response) => {
       search: searchString,
       tags,
       isFeatured,
-      status
+      status,
+      authorId
     });
 
     res.status(200).json(result);
