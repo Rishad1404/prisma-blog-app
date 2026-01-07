@@ -18,6 +18,11 @@ router.patch('/:commentId',
     CommentController.updateComment
 )
 
+router.patch('/:commentId/moderate',
+    auth(UserRole.ADMIN),
+    CommentController.moderateComment
+)
+
 router.post('/',
     auth(UserRole.USER,UserRole.ADMIN),
     CommentController.createComment
