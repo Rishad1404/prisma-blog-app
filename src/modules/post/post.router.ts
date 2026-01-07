@@ -9,6 +9,12 @@ router.get('/',
     PostController.getAllPost
 )
 
+// get stats
+router.get('/stats',
+    auth(UserRole.ADMIN),
+    PostController.getStats
+)
+
 router.get('/my-posts',
     auth(UserRole.USER,UserRole.ADMIN),
     PostController.getMyPosts 
@@ -17,6 +23,8 @@ router.get('/my-posts',
 router.get('/:postId',
     PostController.getPostById
 )
+
+
 
 // Only user can create post not admin
 router.post("/", 
@@ -27,6 +35,11 @@ router.post("/",
 router.patch('/:postId',
     auth(UserRole.USER,UserRole.ADMIN),
     PostController.updatePost
+)
+
+router.delete('/:postId',
+    auth(UserRole.ADMIN,UserRole.USER),
+    PostController.deletePost
 )
 
 export const postRouter: Router = router;
