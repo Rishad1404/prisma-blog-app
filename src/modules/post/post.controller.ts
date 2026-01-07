@@ -71,14 +71,14 @@ const getAllPost = async (req: Request, res: Response) => {
 
 const getPostById = async (req: Request, res: Response) => {
   try {
-    const {postId}=req.params;
+    const { postId } = req.params;
 
-    if(!postId){
-      throw new Error("Post id is required")
+    if (!postId) {
+      throw new Error("Post id is required");
     }
 
-    const result=await PostService.getPostById(postId);
-    res.status(200).json(result)
+    const result = await PostService.getPostById(postId);
+    res.status(200).json(result);
   } catch (err) {
     res.status(400).json({
       error: "Failed to find",
@@ -87,15 +87,14 @@ const getPostById = async (req: Request, res: Response) => {
   }
 };
 
-
 const getMyPosts = async (req: Request, res: Response) => {
   try {
-    const user=req.user;
-    if(!user){
-      throw new Error ("You are unauthorized!")
+    const user = req.user;
+    if (!user) {
+      throw new Error("You are unauthorized!");
     }
-    const result=await PostService.getMyPosts(user?.id as string);
-    res.status(200).json(result)
+    const result = await PostService.getMyPosts(user?.id as string);
+    res.status(200).json(result);
   } catch (err) {
     res.status(400).json({
       error: "Post fetched failed",
@@ -104,9 +103,34 @@ const getMyPosts = async (req: Request, res: Response) => {
   }
 };
 
+// update Post
+const updatePost = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      throw new Error("You are unauthorized!");
+    }
+    const { postId } = req.params;
+    const result = await PostService.updatePost(
+      postId as string,
+      req.body,
+      user.id
+    );
+    res.status(200).json(result);
+  } catch (e) {
+    const errorMessage =
+      e instanceof Error ? e.message : "Moderate Comment failed";
+    res.status(400).json({
+      error: errorMessage,
+      details: e,
+    });
+  }
+};
+
 export const PostController = {
   createPost,
   getAllPost,
   getPostById,
-  getMyPosts
+  getMyPosts,
+  updatePost
 };
