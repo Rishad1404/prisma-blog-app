@@ -101,7 +101,7 @@ const getMyPosts = async (req: Request, res: Response) => {
 };
 
 // update Post
-const updatePost = async (req: Request, res: Response) => {
+const updatePost = async (req: Request, res: Response,next:NextFunction) => {
   try {
     const user = req.user;
     if (!user) {
@@ -120,12 +120,7 @@ const updatePost = async (req: Request, res: Response) => {
     console.log(user);
     res.status(200).json(result);
   } catch (e) {
-    const errorMessage =
-      e instanceof Error ? e.message : "Moderate Comment failed";
-    res.status(400).json({
-      error: errorMessage,
-      details: e,
-    });
+    next()
   }
 };
 
